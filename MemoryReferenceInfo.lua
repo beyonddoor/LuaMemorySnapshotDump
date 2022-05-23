@@ -49,6 +49,7 @@ end
 -- Create a container to collect the mem ref info results.
 local function CreateObjectReferenceInfoContainer()
 	-- Create new container.
+	---@class ObjectReferenceInfoContainer
 	local cContainer = {}
 
 	-- Contain [table/function] - [reference count] info.
@@ -60,12 +61,17 @@ local function CreateObjectReferenceInfoContainer()
 	setmetatable(cObjectAddressToName, {__mode = "k"})
 
 	-- Set members.
+	---@type table The container of [table/function] - [reference count] info.
 	cContainer.m_cObjectReferenceCount = cObjectReferenceCount
+	---@type table The container of [table/function] - [name] info.
 	cContainer.m_cObjectAddressToName = cObjectAddressToName
 
 	-- For stack info.
+	---@type integer stack level
 	cContainer.m_nStackLevel = -1
+	---@type string stack info
 	cContainer.m_strShortSrc = "None"
+	---@type string stack info
 	cContainer.m_nCurrentLine = -1
 
 	return cContainer
@@ -107,6 +113,7 @@ end
 -- cObject - The object you need to collect info.
 local function CreateSingleObjectReferenceInfoContainer(strObjectName, cObject)
 	-- Create new container.
+	---@class SingleObjectReferenceInfoContainer
 	local cContainer = {}
 
 	-- Contain [address] - [true] info.
@@ -142,6 +149,9 @@ end
 -- strName - The root object name that start to search, default is "_G" if leave this to nil.
 -- cObject - The root object that start to search, default is _G if leave this to nil.
 -- cDumpInfoContainer - The container of the dump result info.
+---@param strName any
+---@param cObject any
+---@param cDumpInfoContainer ObjectReferenceInfoContainer
 local function CollectObjectReferenceInMemory(strName, cObject, cDumpInfoContainer)
 	if not cObject then
 		return
@@ -641,6 +651,7 @@ local function OutputMemorySnapshot(strSavePath, strExtraFileName, nMaxRescords,
 	-- Get time format string.
 	local strDateTime = FormatDateTimeNow()
 
+
 	-- Collect memory info.
 	local cRefInfoBase = (cDumpInfoResultsBase and cDumpInfoResultsBase.m_cObjectReferenceCount) or nil
 	local cNameInfoBase = (cDumpInfoResultsBase and cDumpInfoResultsBase.m_cObjectAddressToName) or nil
@@ -859,7 +870,7 @@ local function OutputMemorySnapshotSingleObject(strSavePath, strExtraFileName, n
 	-- Save each info.
 	for k in pairs(cObjectAliasName) do
 		if (nMaxRescords > 0) then
-			if (i <= nMaxRescords) then
+			if (k <= nMaxRescords) then
 				cOutputer(k .. "\n")
 			end
 		else
