@@ -211,12 +211,10 @@ local function CollectObjectReferenceInMemory(strName, cObject, cDumpInfoContain
 			-- Check mode.
 			local strMode = rawget(cMt, "__mode")
 			if strMode then
-				if "k" == strMode then
+				if string.find(strMode, "k") then
 					bWeakK = true
-				elseif "v" == strMode then
-					bWeakV = true
-				elseif "kv" == strMode then
-					bWeakK = true
+				end
+				if string.find(strMode, "v") then
 					bWeakV = true
 				end
 			end
@@ -509,7 +507,7 @@ local function CollectSingleObjectReferenceInMemory(strName, cObject, cDumpInfoC
 					CollectSingleObjectReferenceInMemory(strName .. ".[table:value]", v, cDumpInfoContainer)
 				end
 			else
-				CollectSingleObjectReferenceInMemory(strName .. "." .. k, v, cDumpInfoContainer)
+				CollectSingleObjectReferenceInMemory(strName .. "." .. tostring(k), v, cDumpInfoContainer)
 			end
 		end
 
@@ -868,13 +866,13 @@ local function OutputMemorySnapshotSingleObject(strSavePath, strExtraFileName, n
 	cOutputer("--------------------------------------------------------\n")
 
 	-- Save each info.
-	for k in pairs(cObjectAliasName) do
+	for i, k in pairs(cObjectAliasName) do
 		if (nMaxRescords > 0) then
-			if (k <= nMaxRescords) then
-				cOutputer(k .. "\n")
+			if (i <= nMaxRescords) then
+				cOutputer(tostring(k) .. "\n")
 			end
 		else
-			cOutputer(k .. "\n")
+			cOutputer(tostring(k) .. "\n")
 		end
 	end
 
